@@ -1,0 +1,56 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from myapp import schemas, database, models
+from sqlalchemy.orm import Session
+
+router = APIRouter()
+
+@router.post('/login')
+def login(login_details: schemas.Login_Cred, db: Session = Depends(database.get_db)):
+    user = db.query(models.User).filter(models.User.username == login_details.username, models.User.password == login_details.password).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Wrong username or password')
+
+    role = db.query(models.Role).filter(models.Role.roleid == user.roleid).first()
+    return {"user_id": user.userid, "role": role.role, "isLoggedIn": True} # type: ignore
+
+@router.post("/add-user")
+def add_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
+    new_user = models.User(
+        roleid=user.roleid,
+        name=user.name,
+        username=user.username,
+        password=user.password,  # hash in production
+        number_of_leaves=user.number_of_leaves,
+        reports_to=user.reports_to
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User created successfully"}
+
+@router.get("/get-work-schedule")
+def get_work_schedule(db: Session = Depends(database.get_db)):
+    return db.query(models.Work_Schedule).all()
+
+
+@router.post("/set-work-schedule")
+def set_work_schedule(
+    schedule: list[schemas.WorkScheduleCreate],
+    db: Session = Depends(database.get_db)
+):
+    try:
+        db.query(models.Work_Schedule).delete()
+
+        for day in schedule:
+            db.add(models.Work_Schedule(
+                day_of_week=day.day_of_week,
+                is_working=day.is_working
+            ))
+
+        db.commit()
+        return {"message": "Work schedule replaced successfully"}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
