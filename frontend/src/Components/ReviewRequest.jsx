@@ -134,7 +134,7 @@ const ReviewRequest = () =>{
                     )}
 
                     {/* Action Buttons */}
-                    {request.status === "Pending" && (
+                    {request.status === "Pending" && request.user_id !== Number(user_id) &&(
                         <div className="flex gap-4 pt-4">
                             <button
                                 onClick={() => onApprove(request.request_id)}

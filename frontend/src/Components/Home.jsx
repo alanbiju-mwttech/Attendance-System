@@ -36,8 +36,8 @@ const Home = () => {
                 onClick={() => navigate("/add-user")}
             />
             <ActionCard
-                title="Regularize Attendance"
-                description="Apply for leave, WFH or corrections"
+                title="Set Working Dayes"
+                description="Set Working Days & Week-Offs"
                 icon={<CalendarDaysIcon className="h-8 w-8 text-blue-600" />}
                 onClick={() => navigate("/work-schedule")}
             />
@@ -79,7 +79,7 @@ const Home = () => {
                                 title="View All Requests"
                                 description="View all applied requests and its status"
                                     icon={<ViewfinderCircleIcon className="h-8 w-8 text-blue-600" />}
-                                onClick={() => navigate("/regularize")}
+                                onClick={() => navigate("/user-all-request")}
                             />
                         )}
                     </div>

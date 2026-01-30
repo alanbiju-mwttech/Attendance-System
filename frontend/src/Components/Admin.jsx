@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AddUser = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +10,40 @@ const AddUser = () => {
         number_of_leaves: "",
         reports_to: "" 
     });
+
+    const navigate = useNavigate()
+
+    const [roles, setRoles] = useState([])
+    const [users, setUSers] = useState([])
+
+    const getRoles = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/get-roles`, {
+                method: 'GET',
+            })
+            const data = await response.json()
+            setRoles(data)
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    const getUsers = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/get-users`, {
+                method: 'GET',
+            })
+            const data = await response.json()
+            setUSers(data)
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
+    useEffect(() => {
+        getRoles()
+        getUsers()
+    }, []) 
 
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
@@ -26,7 +61,7 @@ const AddUser = () => {
         setError("");
         setMessage("");
 
-        if (!formData.name || !formData.username || !formData.password || !formData.roleid || formData.number_of_leaves === "") {
+        if (!formData.name || !formData.username || !formData.password  || !formData.roleid || formData.number_of_leaves === "") {
             setError("Please fill all required fields.");
             return;
         }
@@ -47,7 +82,9 @@ const AddUser = () => {
 
             if (!res.ok) throw new Error(data.detail || "Failed to add user");
 
+            
             setMessage("User added successfully!");
+            navigate("/home")
             setFormData({
                 name: "",
                 username: "",
@@ -64,7 +101,7 @@ const AddUser = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
-            <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl p-8 border">
+            <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl px-8 py-4">
                 <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">
                     Add New User
                 </h2>
@@ -74,9 +111,45 @@ const AddUser = () => {
                     <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} />
                     <Input label="Username" name="username" value={formData.username} onChange={handleChange} />
                     <Input label="Password" name="password" type="password" value={formData.password} onChange={handleChange} />
-                    <Input label="Role ID" name="roleid" type="number" value={formData.roleid} onChange={handleChange} />
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                            Role<span className="text-red-500">*</span>
+                        </label>
+                        <select
+                            name="roleid"
+                            value={formData.roleid}
+                            onChange={handleChange}
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="" disabled>Select Role</option>
+                            {roles.map(role => (
+                                <option className="font-medium" key={role.roleid} value={role.roleid}>
+                                    {role.role}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                     <Input label="Number of Leaves" name="number_of_leaves" type="number" value={formData.number_of_leaves} onChange={handleChange} />
-                    <Input label="Reports To (User ID)" name="reports_to" type="number" value={formData.reports_to} onChange={handleChange} optional />
+                    {formData.roleid !== "3" && (
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
+                                Reports To
+                            </label>
+                            <select
+                                name="reports_to"
+                                value={formData.reports_to}
+                                onChange={handleChange}
+                                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="" disabled>Select Reporting Manager</option>
+                                {users.map(user => (
+                                    <option className="font-medium" key={user.userid} value={user.userid}>
+                                        {user.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
                     {error && <p className="text-red-600 text-sm text-center">{error}</p>}
                     {message && <p className="text-green-600 text-sm text-center">{message}</p>}

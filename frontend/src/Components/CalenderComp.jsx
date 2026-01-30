@@ -34,6 +34,10 @@ const CalenderComp = () => {
     const tileContent = ({ date, view }) => {
         if (view !== "month") return null;
 
+        if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
+            return null;
+        }
+
         const record = attendanceData.find((r) =>
             new Date(r.date).toDateString() === date.toDateString()
         );

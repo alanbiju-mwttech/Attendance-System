@@ -14,13 +14,25 @@ def login(login_details: schemas.Login_Cred, db: Session = Depends(database.get_
     role = db.query(models.Role).filter(models.Role.roleid == user.roleid).first()
     return {"user_id": user.userid, "role": role.role, "isLoggedIn": True} # type: ignore
 
+@router.get("/get-roles")
+def get_roles(db: Session = Depends(database.get_db)):
+    roles = db.query(models.Role).filter(models.Role.role != "Admin").all()
+
+    return roles
+
+@router.get("/get-users")
+def get_users(db: Session = Depends(database.get_db)):
+    users = db.query(models.User).all()
+
+    return users
+
 @router.post("/add-user")
 def add_user(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     new_user = models.User(
         roleid=user.roleid,
         name=user.name,
         username=user.username,
-        password=user.password,  # hash in production
+        password=user.password,
         number_of_leaves=user.number_of_leaves,
         reports_to=user.reports_to
     )

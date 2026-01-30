@@ -131,3 +131,20 @@ def approve_reject(approve_details: schemas.Approve_Request, db: Session = Depen
     except:
         db.rollback()
         raise
+
+@router.post('/user/get-requests')
+def get_user_requests(current_user: schemas.Current_User, db: Session = Depends(database.get_db)):
+    
+    try:
+        requests = (
+            db.query(models.Requests)
+            .filter(
+                models.Requests.user_id == current_user.user_id,
+            )
+            .all()
+        )
+        return requests
+
+    except:
+        db.rollback()
+        raise

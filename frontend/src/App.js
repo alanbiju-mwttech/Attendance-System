@@ -7,6 +7,7 @@ import ReviewRequest from './Components/ReviewRequest';
 import AllRequests from './Components/AllRequests';
 import Admin from './Components/Admin';
 import WorkScheduleSetup from './Components/WorkSchedule';
+import UserAllRequests from './Components/UserAllRequests';
 
 function App() {
 	return (	
@@ -20,6 +21,7 @@ function App() {
 					<Route path='/all-requests' element={<AllRequests />} />
 					<Route path='/add-user' element={<Admin />} />
 					<Route path='/work-schedule' element={<WorkScheduleSetup />} />
+					<Route path='/user-all-request' element={<UserAllRequests />} />
 				</Routes>
 			</Router>
 		</>
