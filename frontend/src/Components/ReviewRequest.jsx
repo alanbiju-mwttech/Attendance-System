@@ -83,7 +83,6 @@ const ReviewRequest = () =>{
         <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
             <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
 
-                {/* Header */}
                 <div className="bg-slate-800 text-white p-6">
                     <h2 className="text-2xl font-semibold tracking-wide">
                         Leave / WFH Request
@@ -93,10 +92,8 @@ const ReviewRequest = () =>{
                     </p>
                 </div>
 
-                {/* Body */}
                 <div className="p-6 space-y-6">
 
-                    {/* Status Badge */}
                     <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-500">
                             Request ID: <span className="font-medium text-gray-800">{request.request_id}</span>
@@ -106,7 +103,6 @@ const ReviewRequest = () =>{
                         </span>
                     </div>
 
-                    {/* Details Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
 
                         <InfoCard icon={<UserIcon className="h-5 w-5 text-slate-600" />} label="Employee ID" value={request.user_id} />
@@ -125,15 +121,13 @@ const ReviewRequest = () =>{
                         />
                     </div>
 
-                    {/* Comments */}
                     {request.comments && (
-                        <div className="bg-slate-50 border rounded-lg p-4">
+                        <div className="bg-slate-50 border border-gray-400 rounded-lg p-4">
                             <p className="text-xs text-gray-500 mb-1">Employee Comment</p>
-                            <p className="text-sm text-gray-800">{request.comments}</p>
+                            <p className="font-medium text-gray-800">{request.comments}</p>
                         </div>
                     )}
 
-                    {/* Action Buttons */}
                     {request.status === "Pending" && request.user_id !== Number(user_id) &&(
                         <div className="flex gap-4 pt-4">
                             <button
@@ -160,7 +154,7 @@ const ReviewRequest = () =>{
 };
 
 const InfoCard = ({ icon, label, value }) => (
-    <div className="border rounded-lg p-3 bg-white shadow-sm flex items-start gap-3">
+    <div className="border border-gray-400 rounded-lg p-3 bg-white shadow-sm flex items-start gap-3">
         {icon}
         <div>
             <p className="text-xs text-gray-500">{label}</p>

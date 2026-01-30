@@ -46,15 +46,12 @@ const Home = () => {
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-slate-200 py-15 px-4">
             <div className="max-w-6xl mx-auto">
 
-                {/* Main Grid */}
                 <div className="flex flex-row items-center justify-center gap-10 items-start">
 
-                    {/* Calendar */}
-                    <div className="lg:col-span-2 backdrop-blur-lg bg-white/70 border border-white/40 shadow-xl rounded-3xl p-6">
+                        <div className="lg:col-span-2 backdrop-blur-lg bg-white/70 border border-gray-200 shadow-xl rounded-3xl p-6">
                         <CalenderComp />
                     </div>
 
-                    {/* Actions */}
                     <div className="flex flex-col items-center justify-center gap-6">
                         {role !== "CEO" && (
                             <ActionCard
@@ -78,7 +75,7 @@ const Home = () => {
                             <ActionCard
                                 title="View All Requests"
                                 description="View all applied requests and its status"
-                                    icon={<ViewfinderCircleIcon className="h-8 w-8 text-blue-600" />}
+                                    icon={<ViewfinderCircleIcon className="h-8 w-8 text-purple-700" />}
                                 onClick={() => navigate("/user-all-request")}
                             />
                         )}

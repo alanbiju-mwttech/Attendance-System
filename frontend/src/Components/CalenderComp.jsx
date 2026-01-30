@@ -64,7 +64,6 @@ const CalenderComp = () => {
                 <p className="text-sm text-slate-500">Your monthly attendance overview</p>
             </div>
 
-            {/* Legend */}
             <div className="flex flex-wrap justify-center gap-3 text-xs font-medium">
                 {Object.entries(statusStyles).map(([key, style]) => (
                     <span key={key} className={`px-3 py-1 rounded-full shadow-sm ${style}`}>

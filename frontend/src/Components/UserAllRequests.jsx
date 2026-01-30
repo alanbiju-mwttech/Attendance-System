@@ -52,7 +52,6 @@ const UserAllRequests = () => {
             <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 px-4 md:px-10 pt-[110px] pb-10">
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden pb-10">
 
-                    {/* Header */}
                     <div className="px-6 py-6 flex flex-row items-center justify-between">
                         <div>
                             <h2 className="text-3xl max-md:text-xl font-bold text-gray-600">
@@ -64,7 +63,6 @@ const UserAllRequests = () => {
                         </div>
                     </div>
 
-                    {/* Table */}
                     <hr className="mx-6 mb-7 border-t border-gray-300" />
                     <div className="px-10 relative max-h-[calc(100vh-370px)] overflow-y-auto">
                         <table className="w-full text-left min-w-[550px] border-collapse">

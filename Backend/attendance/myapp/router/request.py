@@ -16,6 +16,14 @@ def send_request(request_details: schemas.Request, db: Session = Depends(databas
         if not attendance:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Attendance has not been updated for this date.')
         
+        request = db.query(models.Requests).filter(
+            models.Requests.user_id == request_details.user_id,
+            models.Requests.request_date == request_details.request_date
+        ).first()
+
+        if request:
+            raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail='Request already exists.')
+
         attendance_request = models.Requests(
             user_id = request_details.user_id,
             request_date = request_details.request_date,

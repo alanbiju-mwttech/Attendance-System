@@ -14,6 +14,7 @@ const Regularize = () => {
     });
     const [apiError, setApiError] = useState("")
     const [absentDates, setAbsentDates] = useState([])
+    const [pls, setPls] = useState({})
 
     const request_types = ["LOP","WFH","PL"]
 
@@ -35,6 +36,13 @@ const Regularize = () => {
 
             if (!dateExists) {
                 alert("You are not absent on this date!");
+                return;
+            }
+        }
+
+        if (name === "request_type" && value === "PL"){
+            if(pls.pl_count >= pls.leave_count){
+                alert("You don't have any leaves this month");
                 return;
             }
         }
@@ -94,7 +102,6 @@ const Regularize = () => {
                     const errorData = await res.json();
                     throw new Error(errorData.detail || "Can't fetch the attendance");
                 }
-
                 const data = await res.json()
                 setAbsentDates(data)
             } catch (error) {
@@ -102,6 +109,27 @@ const Regularize = () => {
             }
         }
 
+        const check_pls = async () => {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/check-pls`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ user_id }),
+                })
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.detail || "Can't fetch the attendance");
+                }
+                const data = await res.json()
+                setPls(data)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        check_pls()
         get_absent_dates()
     },[user_id])
 
@@ -145,6 +173,7 @@ const Regularize = () => {
                                     </option>
                                 ))}
                             </select>
+                            <span className="block text-sm text-gray-600 mt-1 ml-2">Remaining Paid Leaves : {pls.leave_count - pls.pl_count}</span>
                         </div>
 
                         <div>

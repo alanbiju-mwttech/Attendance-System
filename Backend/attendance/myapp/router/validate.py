@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from myapp import database, models, schemas
+from sqlalchemy import func, extract
+from datetime import datetime
 
 router = APIRouter()
 
@@ -24,3 +26,20 @@ def check_absent_dates(current_user: schemas.Current_User, db: Session = Depends
     ).all()
 
     return [row[0] for row in absent_dates] 
+
+@router.post('/check-pls')
+def get_pl_count(current_user: schemas.Current_User, db: Session = Depends(database.get_db)):
+
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    pl_count = db.query(func.count(models.Attendance.attendance_id)).filter(
+        models.Attendance.user_id == current_user.user_id,
+        models.Attendance.status == "PL",
+        extract('month', models.Attendance.date) == current_month,
+        extract('year', models.Attendance.date) == current_year
+    ).scalar()
+
+    leave_count = db.query(models.User.number_of_leaves).filter(models.User.userid == current_user.user_id).scalar()
+
+    return {"pl_count": pl_count, "leave_count": leave_count}
