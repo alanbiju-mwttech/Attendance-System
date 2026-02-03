@@ -9,17 +9,21 @@ def mark_all_absent():
     day_index = today.weekday()
 
     try:
-        schedule = db.query(models.Work_Schedule).filter(
-            models.Work_Schedule.day_of_week == day_index
-        ).first()
-
-        if not schedule:
-            print(f"No work schedule set for weekday {day_index}")
-            return
-
+        
         users = db.query(models.User).all()
 
         for user in users:
+
+            schedule_id = user.schedule_id
+
+            schedule = db.query(models.Work_Schedule).filter(
+                models.Work_Schedule.day_of_week == day_index,
+                models.Work_Schedule.schedule_id == schedule_id
+            ).first()
+
+            if not schedule:
+                print(f"No work schedule set for weekday {day_index}")
+                return
 
             if not schedule.is_working: # type: ignore
                 status = "WO"
@@ -55,4 +59,4 @@ def mark_all_absent():
         db.close()
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(mark_all_absent, "cron", hour=10, minute=10)
+scheduler.add_job(mark_all_absent, "cron", hour=15, minute=28)

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from myapp.router import default
 from fastapi import FastAPI
 from myapp.router.default import scheduler
-from myapp.router import request, login, attendance, validate
+from myapp.router import request, login, attendance, validate, admin
 
 models.Base.metadata.create_all(bind=database.engine)
 
@@ -25,3 +25,4 @@ app.include_router(login.router)
 app.include_router(request.router)
 app.include_router(attendance.router)
 app.include_router(validate.router)
+app.include_router(admin.router)

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import NavBar from "./NavBar"
 
 const AllRequests = () => {
 
@@ -49,6 +50,7 @@ const AllRequests = () => {
 
     return(
         <>
+            <NavBar />
             <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 px-4 md:px-10 pt-[110px] pb-10">
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden pb-10">
 

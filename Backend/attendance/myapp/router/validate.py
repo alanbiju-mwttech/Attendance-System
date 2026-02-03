@@ -22,10 +22,10 @@ def check_reports_to(current_user: schemas.Current_User, db: Session = Depends(d
 def check_absent_dates(current_user: schemas.Current_User, db: Session = Depends(database.get_db)):
     absent_dates = db.query(models.Attendance.date).filter(
         models.Attendance.user_id == current_user.user_id,
-        models.Attendance.status == "AB"
+        models.Attendance.status == "Absent"
     ).all()
 
-    return [row[0] for row in absent_dates] 
+    return [row[0] for row in absent_dates]
 
 @router.post('/check-pls')
 def get_pl_count(current_user: schemas.Current_User, db: Session = Depends(database.get_db)):
@@ -35,11 +35,20 @@ def get_pl_count(current_user: schemas.Current_User, db: Session = Depends(datab
 
     pl_count = db.query(func.count(models.Attendance.attendance_id)).filter(
         models.Attendance.user_id == current_user.user_id,
-        models.Attendance.status == "PL",
+        models.Attendance.status == "Paid Leave",
         extract('month', models.Attendance.date) == current_month,
         extract('year', models.Attendance.date) == current_year
     ).scalar()
 
-    leave_count = db.query(models.User.number_of_leaves).filter(models.User.userid == current_user.user_id).scalar()
+    total_leave = db.query(models.User.number_of_leaves).filter(models.User.userid == current_user.user_id).scalar()
 
-    return {"pl_count": pl_count, "leave_count": leave_count}
+    return {"pl_count": pl_count, "leave_count": total_leave}
+
+@router.get('/leave-types')
+def get_leave_types(db: Session = Depends(database.get_db)):
+    leave = db.query(models.Leave).all()
+
+    return [
+        {"id": l.id, "type": l.leave_type}
+        for l in leave
+    ]

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "./NavBar";
 
 const AddUser = () => {
     const [formData, setFormData] = useState({
@@ -8,13 +9,15 @@ const AddUser = () => {
         password: "",
         roleid: "",
         number_of_leaves: "",
-        reports_to: "" 
+        reports_to: "",
+        schedule_id: ""
     });
 
     const navigate = useNavigate()
 
     const [roles, setRoles] = useState([])
     const [users, setUSers] = useState([])
+    const [schedule, setSchedule] = useState([])
 
     const getRoles = async () => {
         try {
@@ -40,9 +43,22 @@ const AddUser = () => {
         }
     }
 
+    const get_work_schedules = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/get-work-schedules`, {
+                method: 'GET',
+            })
+            const data = await response.json()
+            setSchedule(data)
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
+
     useEffect(() => {
         getRoles()
         getUsers()
+        get_work_schedules()
     }, []) 
 
     const [message, setMessage] = useState("");
@@ -100,69 +116,90 @@ const AddUser = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
-            <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl px-8 py-4">
-                <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">
-                    Add New User
-                </h2>
+        <>
+            <NavBar />
+            <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6 pt-25">
+                <div className="w-full max-w-lg bg-white shadow-xl rounded-2xl px-8 py-4">
+                    <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">
+                        Add New User
+                    </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
 
-                    <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} />
-                    <Input label="Username" name="username" value={formData.username} onChange={handleChange} />
-                    <Input label="Password" name="password" type="password" value={formData.password} onChange={handleChange} />
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                            Role<span className="text-red-500">*</span>
-                        </label>
-                        <select
-                            name="roleid"
-                            value={formData.roleid}
-                            onChange={handleChange}
-                            className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="" disabled>Select Role</option>
-                            {roles.map(role => (
-                                <option className="font-medium" key={role.roleid} value={role.roleid}>
-                                    {role.role}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <Input label="Number of Leaves" name="number_of_leaves" type="number" value={formData.number_of_leaves} onChange={handleChange} />
-                    {formData.roleid !== "3" && (
+                        <Input label="Full Name" name="name" value={formData.name} onChange={handleChange} />
+                        <Input label="Username" name="username" value={formData.username} onChange={handleChange} />
+                        <Input label="Password" name="password" type="password" value={formData.password} onChange={handleChange} />
+                        <Input label="Number of Leaves" name="number_of_leaves" type="number" value={formData.number_of_leaves} onChange={handleChange} />
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Reports To
+                                Role<span className="text-red-500">*</span>
                             </label>
                             <select
-                                name="reports_to"
-                                value={formData.reports_to}
+                                name="roleid"
+                                value={formData.roleid}
                                 onChange={handleChange}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="" disabled>Select Reporting Manager</option>
-                                {users.map(user => (
-                                    <option className="font-medium" key={user.userid} value={user.userid}>
-                                        {user.name}
+                                <option value="" disabled>Select Role</option>
+                                {roles.map(role => (
+                                    <option className="font-medium" key={role.roleid} value={role.roleid}>
+                                        {role.role}
                                     </option>
                                 ))}
                             </select>
                         </div>
-                    )}
+                        {formData.roleid !== "3" && (
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Reports To
+                                </label>
+                                <select
+                                    name="reports_to"
+                                    value={formData.reports_to}
+                                    onChange={handleChange}
+                                    className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="" disabled>Select Reporting Manager</option>
+                                    {users.map(user => (
+                                        <option className="font-medium" key={user.userid} value={user.userid}>
+                                            {user.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
+                                Work Shedule<span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                name="schedule_id"
+                                value={formData.schedule_id}
+                                onChange={handleChange}
+                                className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="" disabled>Select Schedule</option>
+                                {schedule.map(role => (
+                                    <option className="font-medium" key={role.id} value={role.id}>
+                                        {role.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-                    {error && <p className="text-red-600 text-sm text-center">{error}</p>}
-                    {message && <p className="text-green-600 text-sm text-center">{message}</p>}
+                        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+                        {message && <p className="text-green-600 text-sm text-center">{message}</p>}
 
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl shadow-md transition"
-                    >
-                        Create User
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl shadow-md transition"
+                        >
+                            Create User
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

@@ -8,6 +8,11 @@ import AllRequests from './Components/AllRequests';
 import Admin from './Components/Admin';
 import WorkScheduleSetup from './Components/WorkSchedule';
 import UserAllRequests from './Components/UserAllRequests';
+import ViewAllUsers from './Components/ViewAllUsers';
+import UserList from './Components/UserDetails1';
+import UserDetails from './Components/UserDetails';
+import LeaveBalance from './Components/LeaveBalance';
+import EditTotalLeaves from './Components/EditTotalLeaves';
 
 function App() {
 	return (	
@@ -22,6 +27,11 @@ function App() {
 					<Route path='/add-user' element={<Admin />} />
 					<Route path='/work-schedule' element={<WorkScheduleSetup />} />
 					<Route path='/user-all-request' element={<UserAllRequests />} />
+					<Route path='/all-users' element={<ViewAllUsers />} />
+					<Route path='/users/:user_id' element={<UserList />} />
+					<Route path='/user/:user_id' element={<UserDetails />} />
+					<Route path='/leave-balance' element={<LeaveBalance />} />
+					<Route path='/admin/edit-total-leaves' element={<EditTotalLeaves />} />
 				</Routes>
 			</Router>
 		</>

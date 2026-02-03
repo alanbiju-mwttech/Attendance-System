@@ -2,53 +2,38 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import NavBar from "./NavBar"
 
-const UserAllRequests = () => {
+const ViewAllUsers = () => {
 
-    const [requests, setRequests] = useState([])
+    const [users, setUsers] = useState([])
     const navigate = useNavigate()
-    const get_all_requests = async() =>{
-        const user_id = sessionStorage.getItem('user_id')
+    const get_all_users = async () => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/user/get-requests`, {
-                method: "POST",
+            const res = await fetch(`http://127.0.0.1:8000/admin/all-users`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ user_id }),
+                }
             })
             if (!res.ok) {
                 const errorData = await res.json();
                 throw new Error(errorData.detail || "Can't fetch the attendance");
             }
             const data = await res.json()
-            console.log(data)
-            setRequests(data)
+            setUsers(data)
         } catch (error) {
             console.error(error)
         }
     }
 
-    const review_Each_Request = (request_id) => {
-        navigate(`/review-request/${request_id}`)
+    const review_Each_Request = (userid) => {
+        navigate(`/users/${userid}`)
     }
 
-    useEffect(()=>{
-        get_all_requests()
-    },[])
+    useEffect(() => {
+        get_all_users()
+    }, [])
 
-    const formatDateTime = (isoString) => {
-        const date = new Date(isoString);
-        return date.toLocaleString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-        });
-    };
-
-    return(
+    return (
         <>
             <NavBar />
             <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 px-4 md:px-10 pt-[110px] pb-10">
@@ -57,10 +42,10 @@ const UserAllRequests = () => {
                     <div className="px-6 py-6 flex flex-row items-center justify-between">
                         <div>
                             <h2 className="text-3xl max-md:text-xl font-bold text-gray-600">
-                                All Requests
+                                All Users
                             </h2>
                             <p className="text-sm text-gray-500 mt-1 pr-3">
-                                List of all requests to be reviewed.
+                                List of all users.
                             </p>
                         </div>
                     </div>
@@ -72,42 +57,37 @@ const UserAllRequests = () => {
                                 <tr>
                                     <th className="px-3 py-4 text-center">#</th>
                                     <th className="px-3 py-4 text-center">User Id</th>
-                                    <th className="px-3 py-4 text-center">Date</th>
-                                    <th className="px-3 py-4 text-center">Request Type</th>
-                                    <th className="px-3 py-4 text-center">Status</th>
-                                    <th className="px-3 py-4 text-center">Applied At</th>
+                                    <th className="px-3 py-4 text-center">Role</th>
+                                    <th className="px-3 py-4 text-center">Name</th>
+                                    <th className="px-3 py-4 text-center">Reports To</th>
                                 </tr>
                             </thead>
                             <tbody className="h-1 overflow-y-scroll">
-                                {requests.length > 0 ? (
-                                    requests.map((request, index) => (
+                                {users.length > 0 ? (
+                                    users.map((user, index) => (
                                         <tr
-                                            key={request.request_id}
+                                            key={user.userid}
                                             className="border-b border-gray-200 hover:bg-gray-50 transition cursor-pointer"
-                                            onClick={() => { review_Each_Request(request.request_id) }}
+                                            onClick={() => { review_Each_Request(user.userid) }}
                                         >
                                             <td className="px-3 py-4 font-semibold text-center text-center">
                                                 {index + 1}
                                             </td>
 
                                             <td className="px-3 py-4 font-semibold text-center">
-                                                {request.user_id}
+                                                {user.userid}
                                             </td>
 
                                             <td className="px-3 py-4 font-semibold text-center">
-                                                {request.request_date}
+                                                {user.role}
                                             </td>
 
                                             <td className="px-3 py-4 font-semibold text-center">
-                                                {request.request_type}
+                                                {user.name}
                                             </td>
 
                                             <td className="px-3 py-4 font-semibold text-center">
-                                                {request.status}
-                                            </td>
-
-                                            <td className="px-3 py-4 font-semibold text-center">
-                                                {formatDateTime(request.applied_at)}
+                                                {user.reports_to}
                                             </td>
                                         </tr>
 
@@ -118,7 +98,7 @@ const UserAllRequests = () => {
                                             colSpan="5"
                                             className="text-center py-10 text-gray-500"
                                         >
-                                            No Complaints added yet.
+                                            No Users added yet.
                                         </td>
                                     </tr>
                                 )
@@ -132,4 +112,4 @@ const UserAllRequests = () => {
     )
 }
 
-export default UserAllRequests
+export default ViewAllUsers

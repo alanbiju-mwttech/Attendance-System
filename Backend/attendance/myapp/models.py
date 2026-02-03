@@ -3,6 +3,14 @@ from myapp.database import Base
 from datetime import datetime
 from sqlalchemy.sql import func
 
+class Leave(Base):
+
+    __tablename__ = "leave"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    leave_type = Column(String, nullable=False, index=True)
+    number_of_days = Column(Integer, nullable=False, index=True)
+
 class Role(Base):
     
     __tablename__ = "role"
@@ -21,12 +29,22 @@ class User(Base):
     password = Column(String, nullable=False, index=True)
     number_of_leaves = Column(Integer, nullable=False, index=True)
     reports_to = Column(Integer, ForeignKey("user.userid"), nullable=True)
+    schedule_id = Column(Integer, ForeignKey("schedule.id"), nullable=True)
+
+class Schedule(Base):
+
+    __tablename__ = "schedule"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String, nullable=False, index=True)
+    isActive  =Column(Boolean, nullable=False, default=True)
 
 class Work_Schedule(Base):
 
     __tablename__ = "work_schedule"
 
-    schedule_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    schedule_id = Column(Integer, ForeignKey("schedule.id"), nullable=True)
     day_of_week = Column(Integer, nullable=False, index=True)
     is_working = Column(Boolean, nullable=False, index=True)
 

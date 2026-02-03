@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckCircleIcon, XCircleIcon, CalendarDaysIcon, UserIcon } from "@heroicons/react/24/solid";
+import NavBar from "./NavBar";
 
 const ReviewRequest = () =>{
 
@@ -80,76 +81,79 @@ const ReviewRequest = () =>{
     },[request_id])
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
-            <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+        <>
+            <NavBar />  
+            <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6 pt-25">
+                <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
 
-                <div className="bg-slate-800 text-white p-6">
-                    <h2 className="text-2xl font-semibold tracking-wide">
-                        Leave / WFH Request
-                    </h2>
-                    <p className="text-sm text-slate-300 mt-1">
-                        Review and take action
-                    </p>
-                </div>
-
-                <div className="p-6 space-y-6">
-
-                    <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-500">
-                            Request ID: <span className="font-medium text-gray-800">{request.request_id}</span>
-                        </span>
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusColors[request.status]}`}>
-                            {request.status}
-                        </span>
+                    <div className="bg-slate-800 text-white p-6">
+                        <h2 className="text-2xl font-semibold tracking-wide">
+                            Leave / WFH Request
+                        </h2>
+                        <p className="text-sm text-slate-300 mt-1">
+                            Review and take action
+                        </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div className="p-6 space-y-6">
 
-                        <InfoCard icon={<UserIcon className="h-5 w-5 text-slate-600" />} label="Employee ID" value={request.user_id} />
+                        <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-500">
+                                Request ID: <span className="font-medium text-gray-800">{request.request_id}</span>
+                            </span>
+                            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusColors[request.status]}`}>
+                                {request.status}
+                            </span>
+                        </div>
 
-                        <InfoCard
-                            icon={<CalendarDaysIcon className="h-5 w-5 text-slate-600" />}
-                            label="Request Date"
-                            value={new Date(request.request_date).toLocaleDateString()}
-                        />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
 
-                        <InfoCard label="Request Type" value={request.request_type} />
+                            <InfoCard icon={<UserIcon className="h-5 w-5 text-slate-600" />} label="Employee ID" value={request.user_id} />
 
-                        <InfoCard
-                            label="Applied On"
-                            value={new Date(request.applied_at).toLocaleString()}
-                        />
+                            <InfoCard
+                                icon={<CalendarDaysIcon className="h-5 w-5 text-slate-600" />}
+                                label="Request Date"
+                                value={new Date(request.request_date).toLocaleDateString()}
+                            />
+
+                            <InfoCard label="Request Type" value={request.request_type} />
+
+                            <InfoCard
+                                label="Applied On"
+                                value={new Date(request.applied_at).toLocaleString()}
+                            />
+                        </div>
+
+                        {request.comments && (
+                            <div className="bg-slate-50 border border-gray-400 rounded-lg p-4">
+                                <p className="text-xs text-gray-500 mb-1">Employee Comment</p>
+                                <p className="font-medium text-gray-800">{request.comments}</p>
+                            </div>
+                        )}
+
+                        {request.status === "Pending" && request.user_id !== Number(user_id) &&(
+                            <div className="flex gap-4 pt-4">
+                                <button
+                                    onClick={() => onApprove(request.request_id)}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow-md transition"
+                                >
+                                    <CheckCircleIcon className="h-5 w-5" />
+                                    Approve
+                                </button>
+
+                                <button
+                                    onClick={() => onReject(request.request_id)}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl shadow-md transition"
+                                >
+                                    <XCircleIcon className="h-5 w-5" />
+                                    Reject
+                                </button>
+                            </div>
+                        )}
                     </div>
-
-                    {request.comments && (
-                        <div className="bg-slate-50 border border-gray-400 rounded-lg p-4">
-                            <p className="text-xs text-gray-500 mb-1">Employee Comment</p>
-                            <p className="font-medium text-gray-800">{request.comments}</p>
-                        </div>
-                    )}
-
-                    {request.status === "Pending" && request.user_id !== Number(user_id) &&(
-                        <div className="flex gap-4 pt-4">
-                            <button
-                                onClick={() => onApprove(request.request_id)}
-                                className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-xl shadow-md transition"
-                            >
-                                <CheckCircleIcon className="h-5 w-5" />
-                                Approve
-                            </button>
-
-                            <button
-                                onClick={() => onReject(request.request_id)}
-                                className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl shadow-md transition"
-                            >
-                                <XCircleIcon className="h-5 w-5" />
-                                Reject
-                            </button>
-                        </div>
-                    )}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

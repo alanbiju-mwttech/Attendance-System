@@ -8,11 +8,26 @@ const statusStyles = {
     AB: "bg-red-100 text-red-700",
     LOP: "bg-red-200 text-red-800",
     PL: "bg-pink-100 text-pink-700",
-    WO: "bg-yellow-100 text-yellow-700",
+    EL: "bg-purple-200 text-purple-900",
+    CL: "bg-amber-200 text-amber-700",
+    SL: "bg-pink-100 text-pink-700",
+    WO: "bg-gray-300 text-black",
 };
 
 const CalenderComp = () => {
     const [attendanceData, setAttendanceData] = useState([]);
+
+    const STATUS_ABBREVIATIONS = {
+        "Work From Home": "WFH",
+        "Loss of Pay": "LOP",
+        "Paid Leave": "PL",
+        "Casual Leave": "CL",
+        "Sick Leave": "SL",
+        "Earned Leave": "EL",
+        "Absent": "AB",
+        "Week Off": "WO",
+        "Present": "PR",
+    };
 
     useEffect(() => {
         const getAttendance = async () => {
@@ -44,12 +59,15 @@ const CalenderComp = () => {
 
         if (!record) return null;
 
+        const shortStatus =
+            STATUS_ABBREVIATIONS[record.status] || record.status;
+
         return (
             <div className="flex justify-center mt-1">
                 <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-lg font-semibold ${statusStyles[record.status]}`}
+                    className={`text-[10px] px-1.5 py-0.5 rounded-lg font-semibold ${statusStyles[shortStatus]}`}
                 >
-                    {record.status}
+                    {shortStatus}
                 </span>
             </div>
         );

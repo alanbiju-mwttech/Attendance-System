@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "./NavBar";
 
 const Regularize = () => {
 
@@ -15,8 +16,24 @@ const Regularize = () => {
     const [apiError, setApiError] = useState("")
     const [absentDates, setAbsentDates] = useState([])
     const [pls, setPls] = useState({})
+    const [leaveTypes, setLeaveTypes] = useState([])
 
-    const request_types = ["LOP","WFH","PL"]
+    const staticRequestTypes = [
+        { code: "Work From Home", label: "Work From Home" },
+        { code: "Loss of Pay", label: "Loss of Pay" },
+        { code: "Paid Leave", label: "Paid Leave" }
+    ];
+
+    const allRequestTypes = [
+        ...leaveTypes.map(l => ({
+            value: l.type,
+            label: l.type
+        })),
+        ...staticRequestTypes.map(t => ({
+            value: t.label,
+            label: t.label
+        }))
+    ];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,7 +43,7 @@ const Regularize = () => {
                 const dateToParse = record.date ? record.date : record;
 
                 if (!dateToParse) return false;
-
+                console.log(dateToParse)
                 const d = new Date(dateToParse);
                 if (isNaN(d.getTime())) return false;
 
@@ -40,7 +57,7 @@ const Regularize = () => {
             }
         }
 
-        if (name === "request_type" && value === "PL"){
+        if (name === "request_type" && value === "Paid Leave"){
             if(pls.pl_count >= pls.leave_count){
                 alert("You don't have any leaves this month");
                 return;
@@ -109,6 +126,25 @@ const Regularize = () => {
             }
         }
 
+        const get_leave_types = async () => {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/leave-types`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.detail || "Can't fetch the attendance");
+                }
+                const data = await res.json()
+                setLeaveTypes(data)
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
         const check_pls = async () => {
             try {
                 const res = await fetch(`http://127.0.0.1:8000/check-pls`, {
@@ -129,12 +165,14 @@ const Regularize = () => {
             }
         }
 
+        get_leave_types()
         check_pls()
         get_absent_dates()
     },[user_id])
 
     return(
         <>
+            <NavBar />
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
                 <div className="w-full max-w-sm bg-white rounded-xl shadow-xl p-8">
                     <h2 className="text-2xl font-bold text-center mb-6">
@@ -167,13 +205,12 @@ const Regularize = () => {
                                 className="flex-1 mt-1 w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-1 focus:ring-gray-200 transition-all"
                             >
                                 <option value="" disabled>Select Request Type</option>
-                                {request_types.map(role => (
-                                    <option className="font-medium" key={role} value={role}>
-                                        {role}
+                                {allRequestTypes.map(role => (
+                                    <option className="font-medium" key={role.value} value={role.value}>
+                                        {role.label}
                                     </option>
                                 ))}
                             </select>
-                            <span className="block text-sm text-gray-600 mt-1 ml-2">Remaining Paid Leaves : {pls.leave_count - pls.pl_count}</span>
                         </div>
 
                         <div>
