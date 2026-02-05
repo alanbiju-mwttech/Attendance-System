@@ -110,7 +110,6 @@ const UserAllRequests = () => {
                                                 {formatDateTime(request.applied_at)}
                                             </td>
                                         </tr>
-
                                     ))
                                 ) : (
                                     <tr>

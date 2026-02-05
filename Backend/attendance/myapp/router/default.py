@@ -26,16 +26,16 @@ def mark_all_absent():
                 return
 
             if not schedule.is_working: # type: ignore
-                status = "WO"
+                status = "Week Off"
 
             elif user.userid == 1: # type: ignore
-                status = "PR"
+                status = "Present"
 
             elif user.userid == 4: # type: ignore
                 continue
 
             else:
-                status = "AB"
+                status = "Absent"
 
             exists = db.query(models.Attendance).filter(
                 models.Attendance.user_id == user.userid,
@@ -59,4 +59,4 @@ def mark_all_absent():
         db.close()
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(mark_all_absent, "cron", hour=15, minute=28)
+scheduler.add_job(mark_all_absent, "cron", hour=12, minute=8)

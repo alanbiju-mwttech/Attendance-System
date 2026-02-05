@@ -6,19 +6,9 @@ const LeaveBalance = () => {
 
     const user_id = sessionStorage.getItem('user_id')
 
-    const [balances, setBalances] = useState({
-        casual: 0,
-        sick: 0,
-        earned: 0,
-        paid: 0,
-    });
-
-    const [totalLeave, setTotalLeave] = useState({
-        casual: 0,
-        sick: 0,
-        earned: 0,
-        paid: 0,
-    });
+    const [balances, setBalances] = useState({});
+    const [paidLeave, setPaidLeave] = useState({});
+    const [totalLeave, setTotalLeave] = useState({});
 
     useEffect(() => {
         const fetchBalances = async () => {
@@ -35,12 +25,7 @@ const LeaveBalance = () => {
                     throw new Error(errorData.detail || "Can't fetch the attendance");
                 }
                 const data = await res.json()
-                setBalances(prev => ({
-                    ...prev,
-                    casual: data.cl_count,
-                    sick: data.sl_count,
-                    earned: data.el_count
-                }));
+                setBalances(data);
             } catch (error) {
                 console.error(error)
             }
@@ -59,12 +44,7 @@ const LeaveBalance = () => {
                     throw new Error(errorData.detail || "Can't fetch the attendance");
                 }
                 const data = await res.json()
-                setTotalLeave(prev => ({
-                    ...prev,
-                    casual: data.casual,
-                    sick: data.sick,
-                    earned: data.earned
-                }));
+                setTotalLeave(data);
             } catch (error) {
                 console.error(error)
             }
@@ -84,54 +64,50 @@ const LeaveBalance = () => {
                     throw new Error(errorData.detail || "Can't fetch the attendance");
                 }
                 const data = await res.json()
-                setBalances(prev => ({
-                    ...prev,
-                    paid: data.pl_count
-                }));
-
-                setTotalLeave(prev => ({
-                    ...prev,
-                    paid: data.leave_count
-                }));
+                setPaidLeave({
+                    "Taken": data.pl_count,
+                    "Total": data.total_leave
+                })
             } catch (error) {
                 console.error(error)
             }
         }
 
         fetchTotal()
-        fetchBalances();
+        fetchBalances()
+
         check_pls()
     }, [user_id]);
 
     const cards = [
         {
             title: "Casual Leaves",
-            value: balances.casual,
-            total: totalLeave.casual,
+            value: balances["Casual Leave"],
+            total: totalLeave["Casual Leave"],
             note: "Yearly",
             icon: <SparklesIcon className="h-7 w-7 text-blue-600" />,
             bg: "bg-blue-50",
         },
         {
             title: "Sick Leaves",
-            value: balances.sick,
-            total: totalLeave.sick,
+            value: balances["Sick Leave"],
+            total: totalLeave["Sick Leave"],
             note: "Yearly",
             icon: <HeartIcon className="h-7 w-7 text-rose-500" />,
             bg: "bg-rose-50",
         },
         {
             title: "Earned Leaves",
-            value: balances.earned,
-            total: totalLeave.earned,
+            value: balances["Earned Leave"],
+            total: totalLeave["Earned Leave"],
             note: "Yearly",
             icon: <BriefcaseIcon className="h-7 w-7 text-amber-600" />,
             bg: "bg-amber-50",
         },
         {
             title: "Paid Leaves",
-            value: balances.paid,
-            total: totalLeave.paid,
+            value: paidLeave["Taken"],
+            total: paidLeave["Total"],
             note: "Monthly",
             icon: <BanknotesIcon className="h-7 w-7 text-emerald-600" />,
             bg: "bg-emerald-50",

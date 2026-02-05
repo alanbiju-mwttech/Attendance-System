@@ -6,7 +6,6 @@ router = APIRouter()
 
 @router.post('/send-request')
 def send_request(request_details: schemas.Request, db: Session = Depends(database.get_db)):
-    print(request_details)
     try:
         attendance = db.query(models.Attendance).filter(
             models.Attendance.user_id == request_details.user_id,
@@ -136,6 +135,24 @@ def approve_reject(approve_details: schemas.Approve_Request, db: Session = Depen
 
         db.commit()
 
+    except:
+        db.rollback()
+        raise
+
+@router.delete('/request/delete')
+def delete_request(approve_details: schemas.Approve_Request, db: Session = Depends(database.get_db)):
+    
+    try:
+        request = db.query(models.Requests).filter(
+            models.Requests.request_id == approve_details.request_id,
+            models.Requests.user_id == approve_details.user_id
+        ).first()
+        if not request:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Request not found.')
+        
+
+        db.delete(request)
+        db.commit()
     except:
         db.rollback()
         raise

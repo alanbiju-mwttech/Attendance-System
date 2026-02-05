@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CheckCircleIcon, XCircleIcon, CalendarDaysIcon, UserIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon, XCircleIcon, CalendarDaysIcon, UserIcon, TrashIcon } from "@heroicons/react/24/solid";
 import NavBar from "./NavBar";
 
 const ReviewRequest = () =>{
@@ -30,7 +30,7 @@ const ReviewRequest = () =>{
                 throw new Error(errorData.detail || "Can't accept the request!!..");
             }
             navigate(-1)
-            alert('Sussessfully approved the request')
+            alert('Successfully approved the request')
         } catch (error) {
             console.error(error)
         }
@@ -50,7 +50,27 @@ const ReviewRequest = () =>{
                 throw new Error(errorData.detail || "Can't reject the request!!..");
             }
             navigate(-1)
-            alert('Sussessfully rejected the request')
+            alert('Successfully rejected the request')
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const onDelete = async () =>{
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/request/delete`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ request_id: request_id, user_id: user_id })
+            })
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.detail || "Can't reject the request!!..");
+            }
+            navigate(-1)
+            alert('Successfully deleted the request')
         } catch (error) {
             console.error(error)
         }
@@ -131,7 +151,7 @@ const ReviewRequest = () =>{
                             </div>
                         )}
 
-                        {request.status === "Pending" && request.user_id !== Number(user_id) &&(
+                        {request.status === "Pending" && request.user_id !== Number(user_id) && (
                             <div className="flex gap-4 pt-4">
                                 <button
                                     onClick={() => onApprove(request.request_id)}
@@ -147,6 +167,17 @@ const ReviewRequest = () =>{
                                 >
                                     <XCircleIcon className="h-5 w-5" />
                                     Reject
+                                </button>
+                            </div>
+                        )}
+                        {request.status === "Pending" && request.user_id === Number(user_id) && (
+                            <div className="flex gap-4 pt-4">
+                                <button
+                                    onClick={() => onDelete(request.request_id)}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl shadow-md transition"
+                                >
+                                    <TrashIcon className="h-5 w-5" />
+                                    Delete Request
                                 </button>
                             </div>
                         )}

@@ -26,25 +26,19 @@ def view_attendance(current_user: schemas.Current_User, db: Session = Depends(da
 def leave_balance(current_user: schemas.Current_User, db: Session = Depends(database.get_db)):
     current_year = datetime.now().year
 
-    sl_count = db.query(func.count(models.Attendance.attendance_id)).filter(
-        models.Attendance.user_id == current_user.user_id,
-        models.Attendance.status == "Sick Leave",
-        extract('year', models.Attendance.date) == current_year
-    ).scalar()
+    leave_types = [row[0] for row in db.query(models.Leave.leave_type).all()]
 
-    el_count = db.query(func.count(models.Attendance.attendance_id)).filter(
-        models.Attendance.user_id == current_user.user_id,
-        models.Attendance.status == "Earned Leave",
-        extract('year', models.Attendance.date) == current_year
-    ).scalar()
+    balance = {}
+    for leave_type in leave_types:
+        count = db.query(func.count(models.Attendance.attendance_id)).filter(
+            models.Attendance.user_id == current_user.user_id,
+            models.Attendance.status == leave_type,
+            extract('year', models.Attendance.date) == current_year
+        ).scalar()
 
-    cl_count = db.query(func.count(models.Attendance.attendance_id)).filter(
-        models.Attendance.user_id == current_user.user_id,
-        models.Attendance.status == "Casual Leave",
-        extract('year', models.Attendance.date) == current_year
-    ).scalar()
+        balance[leave_type] = count
 
-    return {"cl_count": cl_count, "el_count": el_count, "sl_count": sl_count}
+    return balance
 
 @router.get('/user/total-leaves')
 def total_leaves(db: Session = Depends(database.get_db)):
@@ -57,18 +51,9 @@ def total_leaves(db: Session = Depends(database.get_db)):
         .all()
         )
 
-    summary = {
-        "casual": 0,
-        "sick": 0,
-        "earned": 0,
-    }
+    summary = {}
 
     for leave_type, total in total_leaves:
-        if "Casual" in leave_type:
-            summary["casual"] = total
-        elif "Sick" in leave_type:
-            summary["sick"] = total
-        elif "Earned" in leave_type:
-            summary["earned"] = total
+        summary[leave_type] = total
 
     return summary

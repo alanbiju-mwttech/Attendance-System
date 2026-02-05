@@ -162,7 +162,7 @@ const UserDetails = () => {
                         <div>
                             <p className="text-sm font-medium text-slate-500 mb-1">Reports To</p>
                             <p className="text-lg font-semibold text-slate-800 border-b border-slate-200 pb-1">
-                                {users[0]?.reports_to ? users[0].reports_to : "-"}
+                                {users[0]?.reporting_manager ? users[0].reporting_manager : "-"}
                             </p>
                         </div>
 

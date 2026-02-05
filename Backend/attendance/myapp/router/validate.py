@@ -42,7 +42,7 @@ def get_pl_count(current_user: schemas.Current_User, db: Session = Depends(datab
 
     total_leave = db.query(models.User.number_of_leaves).filter(models.User.userid == current_user.user_id).scalar()
 
-    return {"pl_count": pl_count, "leave_count": total_leave}
+    return {"pl_count": pl_count, "total_leave": total_leave}
 
 @router.get('/leave-types')
 def get_leave_types(db: Session = Depends(database.get_db)):

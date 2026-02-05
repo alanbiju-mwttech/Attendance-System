@@ -100,7 +100,6 @@ def update_user(user_id: int, user_update: schemas.UserUpdate, db: Session = Dep
 
 @router.post('/admin/update-total-leaves')
 def update_total_leaves(payload: schemas.Update_Leaves, db: Session = Depends(database.get_db)):
-    print(payload)
     leave_map = {
         "Sick Leave": payload.sick,
         "Casual Leave": payload.casual,
